@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/:searchItem", (req, res) => {
   const searchItem = req.params.searchItem;
-  console.log(searchItem);
+  
   const queryText = `
     SELECT "farm"."user_id", "jobs"."id", "farm"."farm_name", "farm"."type", "title", "street_address", "city", "state", 
     "zipcode", "latitude", "longitude", "start_date", "end_date", "payment_amount", "payment_period", 
@@ -25,7 +25,7 @@ router.get("/:searchItem", (req, res) => {
   pool
     .query(queryText, [searchItem])
     .then((response) => {
-      console.log(response.rows);
+     
       res.send(response.rows);
     })
     .catch((error) => {

@@ -7,25 +7,25 @@ const router = express.Router();
  */
 router.get("/:id", (req, res) => {
   let id = req.params.id;
-  console.log("in router get", [id]);
+  
   const sqlText = `SELECT "user"."first_name", "user"."last_name", "bio", "city", "state" FROM "user"
   JOIN "talent_user" on "user"."id"="talent_user"."user_id"
   WHERE "user"."id" = $1;`;
   pool
     .query(sqlText, [id])
     .then((result) => {
-      console.log(result.rows);
+      
       res.send(result.rows);
     })
     .catch((error) => {
-      console.log(`Error making database query ${sqlText}`, error);
+      
       res.sendStatus(500);
     });
 });
 //get for talent proficiency
 router.get("/proficiency/:id", (req, res) => {
   let id = req.params.id;
-  console.log("in router get", [id]);
+  
   const sqlText = `SELECT "proficiencies"."id", "proficiency_name", "proficiency_category", "length_experience", "first_name" FROM "user"
 JOIN "user_proficiencies" on "user"."id"="user_proficiencies"."user_id"
 JOIN "proficiencies" on "user_proficiencies"."proficiency_id"="proficiencies"."id"
@@ -33,47 +33,47 @@ WHERE "user"."id" = $1;`;
   pool
     .query(sqlText, [id])
     .then((result) => {
-      console.log(result.rows);
+     
       res.send(result.rows);
     })
     .catch((error) => {
-      console.log(`Error making database query ${sqlText}`, error);
+    
       res.sendStatus(500);
     });
 });
 //get for talent certification for profile page
 router.get("/certification/:id", (req, res) => {
   let id = req.params.id;
-  console.log("in router get", [id]);
+  
   const sqlText = `SELECT "certification"."id", "certification_name", "issuing_company", "issue_date", "expiration_date" FROM "user"
 JOIN "certification" on "user"."id"="certification"."user_id"
 WHERE "user"."id" = $1;`;
   pool
     .query(sqlText, [id])
     .then((result) => {
-      console.log(result.rows);
+      
       res.send(result.rows);
     })
     .catch((error) => {
-      console.log(`Error making database query ${sqlText}`, error);
+      
       res.sendStatus(500);
     });
 });
 
 router.get("/education/:id", (req, res) => {
   let id = req.params.id;
-  console.log("in router get", [id]);
+ 
   const sqlText = `SELECT "education"."id", "institution_name", "degree", "start_date", "end_date" FROM "user"
 JOIN "education" on "user"."id"="education"."user_id"
 WHERE "user"."id" = $1;`;
   pool
     .query(sqlText, [id])
     .then((result) => {
-      console.log(result.rows);
+      
       res.send(result.rows);
     })
     .catch((error) => {
-      console.log(`Error making database query ${sqlText}`, error);
+      
       res.sendStatus(500);
     });
 });
@@ -81,18 +81,18 @@ WHERE "user"."id" = $1;`;
 //get for talent employment
 router.get("/employment/:id", (req, res) => {
   let id = req.params.id;
-  console.log("in router get", [id]);
+  
   const sqlText = `SELECT "employment"."id", "employer_name", "title", "start_date", "end_date" FROM "user"
 JOIN "employment" on "user"."id"="employment"."user_id"
 WHERE "user"."id" = $1;;`;
   pool
     .query(sqlText, [id])
     .then((result) => {
-      console.log(result.rows);
+     
       res.send(result.rows);
     })
     .catch((error) => {
-      console.log(`Error making database query ${sqlText}`, error);
+    
       res.sendStatus(500);
     });
 });
@@ -101,7 +101,7 @@ WHERE "user"."id" = $1;;`;
  */
 
 router.post("/", async (req, res) => {
-  console.log(req.body);
+
   const userId = req.user.id;
   const city = req.body.city;
   const state = req.body.state;
@@ -214,9 +214,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/skills/:id", async (req, res) => {
-  console.log("REQ.PARAMS", req.params.id, "REQ.BODY", req.body);
   const skills = req.body;
-  console.log("skills", skills);
   const userId = req.params.id;
   const updateTalentProfile = await pool.connect();
 
@@ -228,7 +226,6 @@ router.put("/skills/:id", async (req, res) => {
     OR "proficiency_category" = 'Maintenance and Mechanics' OR "proficiency_category" = 'Trucking');
     `;
     const result = await updateTalentProfile.query(queryStringSelect, [userId]);
-    console.log("result", result.rows);
 
     await Promise.all(
       result.rows.map((item) => {
@@ -255,7 +252,6 @@ router.put("/skills/:id", async (req, res) => {
   } catch (err) {
     await updateTalentProfile.query("ROLLBACK");
     res.sendStatus(500);
-    console.log(err);
     throw err;
   } finally {
     updateTalentProfile.release();
@@ -263,9 +259,7 @@ router.put("/skills/:id", async (req, res) => {
 });
 
 router.put("/equipment/:id", async (req, res) => {
-  console.log("REQ.PARAMS", req.params.id, "REQ.BODY", req.body);
   const skills = req.body;
-  console.log("skills", skills);
   const userId = req.params.id;
   const updateTalentProfile = await pool.connect();
 
@@ -276,7 +270,6 @@ router.put("/equipment/:id", async (req, res) => {
     AND("proficiency_category" = 'Brand' OR "proficiency_category" = 'Equipment');
     `;
     const result = await updateTalentProfile.query(queryStringSelect, [userId]);
-    console.log("result", result.rows);
 
     await Promise.all(
       result.rows.map((item) => {
@@ -299,7 +292,6 @@ router.put("/equipment/:id", async (req, res) => {
   } catch (err) {
     await updateTalentProfile.query("ROLLBACK");
     res.sendStatus(500);
-    console.log(err);
     throw err;
   } finally {
     updateTalentProfile.release();
@@ -307,7 +299,6 @@ router.put("/equipment/:id", async (req, res) => {
 });
 
 router.put("/certifications", async (req, res) => {
-  console.log("USER ID", req.user.id, "REQ.BODY", req.body);
   const certifications = req.body;
   const userId = req.user.id;
   const updateTalentProfile = await pool.connect();
@@ -318,7 +309,6 @@ router.put("/certifications", async (req, res) => {
     
     `;
     const result = await updateTalentProfile.query(queryStringSelect, [userId]);
-    console.log("result", result.rows);
 
     await Promise.all(
       result.rows.map((item) => {
@@ -347,7 +337,7 @@ router.put("/certifications", async (req, res) => {
   } catch (err) {
     await updateTalentProfile.query("ROLLBACK");
     res.sendStatus(500);
-    console.log(err);
+   
     throw err;
   } finally {
     updateTalentProfile.release();
@@ -355,7 +345,7 @@ router.put("/certifications", async (req, res) => {
 });
 
 router.put("/education", async (req, res) => {
-  console.log("USER ID", req.user.id, "REQ.BODY", req.body);
+  
   const education = req.body;
   const userId = req.user.id;
   const updateTalentProfile = await pool.connect();
@@ -366,7 +356,7 @@ router.put("/education", async (req, res) => {
     
     `;
     const result = await updateTalentProfile.query(queryStringSelect, [userId]);
-    console.log("result", result.rows);
+    
 
     await Promise.all(
       result.rows.map((item) => {
@@ -395,7 +385,7 @@ router.put("/education", async (req, res) => {
   } catch (err) {
     await updateTalentProfile.query("ROLLBACK");
     res.sendStatus(500);
-    console.log(err);
+    
     throw err;
   } finally {
     updateTalentProfile.release();
@@ -403,7 +393,7 @@ router.put("/education", async (req, res) => {
 });
 
 router.put("/employment", async (req, res) => {
-  console.log("USER ID", req.user.id, "REQ.BODY", req.body);
+  
   const employment = req.body;
   const userId = req.user.id;
   const updateTalentProfile = await pool.connect();
@@ -414,7 +404,7 @@ router.put("/employment", async (req, res) => {
     
     `;
     const result = await updateTalentProfile.query(queryStringSelect, [userId]);
-    console.log("result", result.rows);
+    
 
     await Promise.all(
       result.rows.map((item) => {
@@ -443,7 +433,7 @@ router.put("/employment", async (req, res) => {
   } catch (err) {
     await updateTalentProfile.query("ROLLBACK");
     res.sendStatus(500);
-    console.log(err);
+    
     throw err;
   } finally {
     updateTalentProfile.release();

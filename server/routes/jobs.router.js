@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   const farmId = req.user.id;
-  console.log(farmId);
+
   const title = req.body.jobTitle;
   const description = req.body.jobDescription;
   const type = req.body.jobType;
@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
       paymentAmount,
     ]);
     const jobID = result.rows[0].id;
-    console.log("result rows", result.rows[0]);
+ 
 
     await Promise.all(
       req.body.skills.map((item) => {
@@ -89,7 +89,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", (req, res) => {
-  console.log("JOBS REQUESTED!!");
+ 
   const queryText = `
     SELECT "farm"."user_id", "jobs"."id", "farm"."farm_name", "jobs"."type", "title", "street_address", "city", "state", 
     "zipcode", "latitude", "longitude", "start_date", "end_date", "payment_amount", "payment_period", 
